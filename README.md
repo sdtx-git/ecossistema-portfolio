@@ -1,6 +1,21 @@
 # Ecossistema de Governança de Pessoas
 
+[![testes](https://github.com/sdtx-git/ecossistema-portfolio/actions/workflows/testes.yml/badge.svg)](https://github.com/sdtx-git/ecossistema-portfolio/actions/workflows/testes.yml)
+![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.12-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES%20modules-F7DF1E?logo=javascript&logoColor=black)
+![Chart.js](https://img.shields.io/badge/Chart.js-4-FF6384?logo=chartdotjs&logoColor=white)
+[![Licença: MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-blue)](LICENSE)
+
 Réplica de demonstração de um conjunto de aplicações internas de **gestão de pessoas em operações de atendimento**: um hub de acesso, um assistente de gestão e três painéis analíticos alimentados por cargas automáticas.
+
+Auditoria de hierarquia, SLA de reposição de vagas e compliance de jornada (interjornada, excedentes e sub-jornada) num único processo FastAPI, com frontend sem build, tema claro e escuro e dados 100% sintéticos. Roda local em um comando.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/exo-dark.png">
+  <img alt="Painel do Exo, assistente de gestão" src="docs/screenshots/exo-light.png">
+</picture>
 
 > Todos os dados são **100% sintéticos**, gerados por código com semente fixa. Não há nomes reais, empresas, fornecedores, endereços ou credenciais. A hierarquia usa rótulos genéricos (`Gerente 1`, `Coordenador 3`, `Supervisor 12`, `Agente 0042`).
 
@@ -14,6 +29,16 @@ Réplica de demonstração de um conjunto de aplicações internas de **gestão 
 | **Controle de Reposições** | Prazo de abertura de RQ em dias úteis após o desligamento, controle das requisições, quadro de vagas por supervisão e evolução diária. |
 | **Relatórios Operacionais** | Interjornada (descanso < 11h), excedentes e sub-jornada a partir de login e logout, com filtros hierárquicos, reincidência e detalhe por colaborador. |
 | **Cargas automáticas** | Ciclo em segundo plano que "extrai" os arquivos de origem, valida o layout, compara por hash, entrega só o que mudou, guarda pendências para a próxima rodada, abre circuito após falhas seguidas e atende extrações sob pedido. |
+
+## Telas
+
+| Hub de Governança | Gestão do Quadro |
+|---|---|
+| <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/hub-dark.png"><img alt="Hub de Governança" src="docs/screenshots/hub-light.png"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/quadro-dark.png"><img alt="Gestão do Quadro, auditoria de hierarquia" src="docs/screenshots/quadro-light.png"></picture> |
+| **Controle de Reposições** | **Relatórios Operacionais** |
+| <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/reposicoes-dark.png"><img alt="Controle de Reposições, abertura de RQ" src="docs/screenshots/reposicoes-light.png"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/relatorios-dark.png"><img alt="Relatórios Operacionais, interjornada" src="docs/screenshots/relatorios-light.png"></picture> |
+
+As imagens acompanham o tema do GitHub (claro ou escuro).
 
 ## Arquitetura
 
@@ -117,4 +142,13 @@ frontend/
   design-system/       tokens, componentes CSS e utilitários JS compartilhados
   hub/ exo/ quadro/ reposicoes/ relatorios/
 tests/
+docs/screenshots/      capturas das telas
 ```
+
+## Autor
+
+Projeto de portfólio. Contato pelo [LinkedIn](https://www.linkedin.com/in/jmartinsce).
+
+## Licença
+
+[MIT](LICENSE)
