@@ -1,0 +1,28 @@
+.hub { display: flex; flex-direction: column; gap: 28px; margin-top: 28px; }
+.hub-resumo { background: var(--bg-surface); }
+
+.hub-categoria { display: flex; flex-direction: column; gap: 12px; }
+.hub-categoria h2 { padding: 0 2px; font-size: 11.5px; font-weight: 700; letter-spacing: .085em; color: var(--text-secondary); }
+
+.hub-sistemas { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.hub-sistema { position: relative; display: flex; flex-direction: column; gap: 12px; min-height: 176px; padding: 20px; color: inherit; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--border-radius); box-shadow: var(--shadow-card); transition: border-color .15s ease-out; }
+.hub-sistema:hover { border-color: var(--text-tertiary); text-decoration: none; }
+.hub-sistema-icone { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: var(--bg-surface-alt); color: var(--text-primary); font-size: 21px; }
+.hub-sistema h3 { font-size: 16px; font-weight: 600; }
+.hub-sistema p { font-size: 12.5px; color: var(--text-tertiary); }
+.hub-sistema-rodape { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border-color); font-size: 12px; }
+.hub-sistema-rodape .ti { color: var(--text-tertiary); }
+.hub-editar { position: absolute; top: 12px; right: 12px; opacity: 0; transition: opacity .15s ease-out; }
+.hub-sistema:hover .hub-editar, .hub-sistema:focus-within .hub-editar, .hub-chip:hover .hub-editar, .hub-chip:focus-within .hub-editar { opacity: 1; }
+
+.hub-status { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; letter-spacing: .02em; color: var(--text-secondary); }
+.hub-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--text-tertiary); }
+.hub-status.online::before { background: var(--text-primary); }
+.hub-status.manutencao { color: var(--alerta); }
+.hub-status.manutencao::before { background: var(--alerta); }
+
+.hub-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.hub-chip { position: relative; display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 44px 0 14px; color: var(--text-primary); background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); font-size: 13px; font-weight: 500; }
+.hub-chip:hover { border-color: var(--text-tertiary); text-decoration: none; }
+.hub-chip > .ti { color: var(--text-tertiary); }
+.hub-chip .hub-editar { top: 50%; right: 4px; transform: translateY(-50%); }
