@@ -26,7 +26,7 @@ Auditoria de hierarquia, SLA de reposição de vagas e compliance de jornada (in
 | **Hub de Governança** | Catálogo dos sistemas com status ao vivo, links internos e externos editáveis (CRUD persistido em JSON) e resumo das cargas automáticas. |
 | **Exo** | Assistente de gestão com login e escopo por nível hierárquico: painel do dia, tarefas com histórico, casos individuais, medidas disciplinares com sugestão de progressão, agenda com decisões que viram tarefas, visão de equipes, busca global, monitoramento das cargas e trilha de auditoria. |
 | **Gestão do Quadro** | Auditoria de hierarquia (dentro do próprio quadro e contra o sistema organizacional) com rastreio da origem de cada divergência, diagnóstico das suposições, novatos por turma, vagas, histórico do quadro dia a dia, desligados e contas pendentes de baixa. |
-| **Controle de Reposições** | Prazo de abertura de RQ em dias úteis após o desligamento, controle das requisições, quadro de vagas por supervisão e evolução diária. |
+| **Controle de Reposições** | Dias corridos entre o desligamento e a abertura da RQ, controle das requisições, quadro de vagas por supervisão e evolução diária. |
 | **Relatórios Operacionais** | Interjornada (descanso < 11h), excedentes e sub-jornada a partir de login e logout, com filtros hierárquicos, reincidência e detalhe por colaborador. |
 | **Cargas automáticas** | Ciclo em segundo plano que "extrai" os arquivos de origem, valida o layout, compara por hash, entrega só o que mudou, guarda pendências para a próxima rodada, abre circuito após falhas seguidas e atende extrações sob pedido. |
 
