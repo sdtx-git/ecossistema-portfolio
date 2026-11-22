@@ -94,8 +94,9 @@ function gravarPreferencia(chave, valor) {
   }
 }
 
-export function iniciarTema() {
-  document.documentElement.dataset.theme = lerPreferencia("theme") === "dark" ? "dark" : "light";
+export function iniciarTema(padrao = "light") {
+  const salvo = lerPreferencia("theme");
+  document.documentElement.dataset.theme = salvo === "dark" || salvo === "light" ? salvo : padrao;
 }
 
 export function botaoTema() {
@@ -674,43 +675,64 @@ export function parametrosFiltro(estado, extras = {}) {
 const SITUACOES_CARGA = { ok: "Em dia", atrasada: "Atrasada", circuito_aberto: "Pausada após falhas", aguardando: "Aguardando" };
 
 export function botaoCargas() {
-  return botao("Cargas automáticas", {
-    icone: "refresh",
-    onclick: async () => {
-      const corpo = el("div", { classe: "formulario" }, carregando());
-      modal({ titulo: "Cargas automáticas", conteudo: corpo });
-      try {
-        const dados = await api("/api/cargas/status");
-        const destinos = new Map();
-        for (const e of dados.entregas) {
-          if (!destinos.has(e.destino)) destinos.set(e.destino, []);
-          destinos.get(e.destino).push(e);
-        }
-        const pendentes = new Set(dados.pendentes.map((p) => p.destino));
-        corpo.replaceChildren(
-          el("div", { classe: "cartao-status" }, [
-            el("div", { classe: "cartao-status-topo" }, [
-              el("span", { classe: "cartao-status-titulo", texto: "Ciclo de coleta" }),
-              selo(SITUACOES_CARGA[dados.situacao] || dados.situacao, dados.situacao === "ok" ? "forte" : "critico"),
-            ]),
-            el("dl", {}, [
-              el("div", {}, [el("dt", { texto: "Última rodada" }), el("dd", { texto: fmt.dataHora(dados.ultima_rodada) })]),
-              el("div", {}, [el("dt", { texto: "Próxima rodada" }), el("dd", { texto: fmt.dataHora(dados.proxima_rodada) })]),
-            ]),
-          ]),
-          ...[...destinos.entries()].map(([destino, entregas]) => el("div", { classe: "cartao-status" }, [
-            el("div", { classe: "cartao-status-topo" }, [
-              el("span", { classe: "cartao-status-titulo", texto: destino }),
-              selo(pendentes.has(destino) ? "Entrega pendente" : "Recebido", pendentes.has(destino) ? "critico" : "forte"),
-            ]),
-            el("dl", {}, entregas.map((e) => el("div", {}, [el("dt", { texto: dados.tipos[e.tipo] }), el("dd", { texto: fmt.dataHora(e.em) })]))),
-          ])),
-        );
-      } catch (erro) {
-        corpo.replaceChildren(blocoErro(erro));
-      }
-    },
-  });
+  return botao("Cargas automáticas", { icone: "refresh", onclick: abrirCargas });
+}
+
+export function statusCargas() {
+  const texto = el("span", { classe: "status-carga-texto" }, "Verificando carga…");
+  const elemento = el("button", { classe: "status-carga", type: "button", title: "Ver cargas automáticas", onclick: abrirCargas }, [el("i", { classe: "status-carga-ponto" }), texto]);
+  async function atualizar() {
+    try {
+      const dados = await api("/api/cargas/status");
+      const pendente = dados.pendentes.some((p) => p.destino === "Gestão do Quadro");
+      elemento.dataset.situacao = dados.situacao === "ok" && !pendente ? "ok" : dados.situacao;
+      texto.replaceChildren(
+        el("b", { texto: pendente ? "Recebendo arquivo…" : `Carga automática ${(SITUACOES_CARGA[dados.situacao] || dados.situacao).toLowerCase()}` }),
+        el("small", { texto: dados.proxima_rodada ? `Próxima rodada às ${fmt.hora(dados.proxima_rodada)}` : "Sem rodada agendada" }),
+      );
+    } catch {
+      elemento.dataset.situacao = "erro";
+      texto.replaceChildren(el("b", { texto: "Status da carga indisponível" }));
+    }
+  }
+  atualizar();
+  setInterval(atualizar, 60000);
+  return elemento;
+}
+
+export async function abrirCargas() {
+  const corpo = el("div", { classe: "formulario" }, carregando());
+  modal({ titulo: "Cargas automáticas", conteudo: corpo });
+  try {
+    const dados = await api("/api/cargas/status");
+    const destinos = new Map();
+    for (const e of dados.entregas) {
+      if (!destinos.has(e.destino)) destinos.set(e.destino, []);
+      destinos.get(e.destino).push(e);
+    }
+    const pendentes = new Set(dados.pendentes.map((p) => p.destino));
+    corpo.replaceChildren(
+      el("div", { classe: "cartao-status" }, [
+        el("div", { classe: "cartao-status-topo" }, [
+          el("span", { classe: "cartao-status-titulo", texto: "Ciclo de coleta" }),
+          selo(SITUACOES_CARGA[dados.situacao] || dados.situacao, dados.situacao === "ok" ? "forte" : "critico"),
+        ]),
+        el("dl", {}, [
+          el("div", {}, [el("dt", { texto: "Última rodada" }), el("dd", { texto: fmt.dataHora(dados.ultima_rodada) })]),
+          el("div", {}, [el("dt", { texto: "Próxima rodada" }), el("dd", { texto: fmt.dataHora(dados.proxima_rodada) })]),
+        ]),
+      ]),
+      ...[...destinos.entries()].map(([destino, entregas]) => el("div", { classe: "cartao-status" }, [
+        el("div", { classe: "cartao-status-topo" }, [
+          el("span", { classe: "cartao-status-titulo", texto: destino }),
+          selo(pendentes.has(destino) ? "Entrega pendente" : "Recebido", pendentes.has(destino) ? "critico" : "forte"),
+        ]),
+        el("dl", {}, entregas.map((e) => el("div", {}, [el("dt", { texto: dados.tipos[e.tipo] }), el("dd", { texto: fmt.dataHora(e.em) })]))),
+      ])),
+    );
+  } catch (erro) {
+    corpo.replaceChildren(blocoErro(erro));
+  }
 }
 
 export function moduloComMenu({ titulo, icone: nomeIcone, grupos, paginaInicial, area }) {
@@ -730,8 +752,8 @@ export function moduloComMenu({ titulo, icone: nomeIcone, grupos, paginaInicial,
   async function navegar() {
     const chave = chaveAtual();
     const pagina = paginas.get(chave);
-    menu.replaceChildren(...grupos.map((g) => el("div", { classe: "shell-grupo", role: "group", "aria-label": g.titulo }, [
-      el("span", { classe: "shell-grupo-titulo", texto: g.titulo }),
+    menu.replaceChildren(...grupos.map((g) => el("div", { classe: "shell-grupo", role: "group", "aria-label": g.titulo || null }, [
+      g.titulo ? el("span", { classe: "shell-grupo-titulo", texto: g.titulo }) : null,
       ...g.itens.map((i) => el("a", { classe: `shell-item${i.chave === chave ? " ativo" : ""}`, href: `#/${i.chave}`, "aria-current": i.chave === chave ? "page" : null }, [icone(i.icone), el("span", { texto: i.rotulo })])),
     ])));
     tituloPagina.textContent = pagina.rotulo;
@@ -755,7 +777,7 @@ export function moduloComMenu({ titulo, icone: nomeIcone, grupos, paginaInicial,
     el("div", { classe: "shell-principal" }, [
       el("header", { classe: "shell-topo" }, [
         el("div", { classe: "shell-titulo" }, [tituloPagina, descricaoPagina]),
-        el("div", { classe: "topo-acoes" }, [acoesPagina, botaoCargas(), botaoTema()]),
+        el("div", { classe: "topo-acoes" }, [acoesPagina, statusCargas(), botaoTema()]),
       ]),
       conteudo,
       rodape(area),

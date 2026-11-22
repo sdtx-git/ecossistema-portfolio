@@ -66,3 +66,41 @@ def test_exo_admin_solicita_extracao(cliente):
     assert _entrar(cliente, "admin").status_code == 200
     assert cliente.post("/api/exo/monitoramento/extracoes", json={"tipo": "vagas"}).status_code == 202
     assert cliente.post("/api/exo/monitoramento/extracoes", json={"tipo": "inexistente"}).status_code == 422
+
+
+def test_quadro_desligados_coerentes_com_o_mes(cliente):
+    dados = cliente.get("/api/quadro/desligados").json()
+    assert dados["de"].endswith("-01") and dados["de"][:7] == dados["ate"][:7]
+    assert dados["kpis"]["desligados"] == len(dados["linhas"])
+    assert sum(dados["kpis"][c] for c in dados["classes"]) == dados["kpis"]["desligados"]
+    voluntarios = cliente.get("/api/quadro/desligados?classe=Volunt%C3%A1rio").json()
+    assert {l["classe"] for l in voluntarios["linhas"]} <= {"Voluntário"}
+    assert voluntarios["kpis"]["desligados"] == dados["kpis"]["Voluntário"]
+
+
+def test_quadro_area_restringe_auditoria(cliente):
+    todas = cliente.get("/api/quadro/auditoria").json()["kpis"]
+    pgt = cliente.get("/api/quadro/auditoria?area=PGT").json()["kpis"]
+    planejamento = cliente.get("/api/quadro/auditoria?area=Planejamento").json()["kpis"]
+    assert pgt["registros_auditados"] + planejamento["registros_auditados"] == todas["registros_auditados"]
+    assert pgt["divergencias"] + planejamento["divergencias"] == todas["divergencias"]
+
+
+def test_quadro_historico_status_fecha_com_o_total(cliente):
+    dados = cliente.get("/api/quadro/historico").json()
+    assert sum(s["total"] for s in dados["por_status"]) == dados["total_no_dia"] == len(dados["colaboradores"])
+
+
+def test_quadro_organizacao_contagens_coerentes(cliente):
+    dados = cliente.get("/api/quadro/organizacao").json()
+    assert dados["total"] == len(dados["linhas"]) == dados["contagem_setor"][""] == dados["contagem_situacao"]["Desligado"]
+    assert dados["contagem_setor"]["Agendamento"] + dados["contagem_setor"]["Atendimento"] == dados["total"]
+
+
+def test_quadro_importacao_valida_arquivo(cliente):
+    assert cliente.post("/api/quadro/fontes/rh", json={"arquivos": ["relatorio.pdf"]}).status_code == 422
+    assert cliente.post("/api/quadro/fontes/inexistente", json={"arquivos": ["a.xlsx"]}).status_code == 404
+    fonte = cliente.post("/api/quadro/fontes/rh", json={"arquivos": ["acompanhamento.xlsx"]}).json()
+    assert fonte["arquivos"] == ["acompanhamento.xlsx"] and fonte["em"]
+    referencia = cliente.post("/api/quadro/referencia", json={"arquivos": ["ajuste.xlsx"]}).json()
+    assert sum(referencia["contagem"].values()) == len(referencia["linhas"])

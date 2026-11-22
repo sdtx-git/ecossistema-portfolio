@@ -23,9 +23,9 @@ Auditoria de hierarquia, SLA de reposição de vagas e compliance de jornada (in
 
 | Módulo | O que faz |
 |---|---|
-| **Hub de Governança** | Catálogo dos sistemas com status ao vivo, links internos e externos editáveis (CRUD persistido em JSON) e resumo das cargas automáticas. |
+| **Hub de Governança** | Central de sistemas: saudação, sistemas internos com status ao vivo e indicadores (RQs pendentes, recebimento do quadro), acessos rápidos por categoria editáveis (CRUD persistido em JSON) e acesso ao Exo. |
 | **Exo** | Assistente de gestão com login e escopo por nível hierárquico: painel do dia, tarefas com histórico, casos individuais, medidas disciplinares com sugestão de progressão, agenda com decisões que viram tarefas, visão de equipes, busca global, monitoramento das cargas e trilha de auditoria. |
-| **Gestão do Quadro** | Auditoria de hierarquia (dentro do próprio quadro e contra o sistema organizacional) com rastreio da origem de cada divergência, diagnóstico das suposições, novatos por turma, vagas, histórico do quadro dia a dia, desligados e contas pendentes de baixa. |
+| **Gestão do Quadro** | Auditoria sob demanda (dentro do próprio quadro e contra o relatório de funcionários) com rastreio da origem de cada divergência e filtro por área (Planejamento/PGT), arquivo de inserção de novatos e turmas, conferência dos arquivos mensais de ajuste, consolidado das planilhas de RQs e acompanhamento do RH, quadro funcional dia a dia com status e escala, desligados do mês com corte parcial e comparação com o mês anterior, contas pendentes de baixa com a situação no relatório e upload manual das fontes. Na demonstração, as importações registram só o nome e o horário do arquivo. |
 | **Controle de Reposições** | Dias corridos entre o desligamento e a abertura da RQ, controle das requisições, quadro de vagas por supervisão e evolução diária. |
 | **Relatórios Operacionais** | Interjornada (descanso < 11h), excedentes e sub-jornada a partir de login e logout, com filtros hierárquicos, reincidência e detalhe por colaborador. |
 | **Cargas automáticas** | Ciclo em segundo plano que "extrai" os arquivos de origem, valida o layout, compara por hash, entrega só o que mudou, guarda pendências para a próxima rodada, abre circuito após falhas seguidas e atende extrações sob pedido. |
@@ -68,7 +68,7 @@ flowchart LR
 
 - **Hierarquia:** 1 diretoria, 4 gerências, 12 coordenações, 48 supervisões e cerca de 530 agentes, distribuídos em 8 serviços e 3 sedes.
 - **Quadro funcional** com cargo, turno, admissões, desligamentos dos últimos 120 dias (voluntários, involuntários, promoções e outras saídas), férias, afastamentos e trocas de supervisão.
-- **Inconsistências propositais** para a auditoria encontrar: coordenação trocada, gerência vazia e supervisão divergente entre o quadro e o sistema organizacional.
+- **Inconsistências propositais** para a auditoria encontrar: coordenação trocada, gerência vazia e supervisão divergente entre o quadro e o relatório de funcionários.
 - **Jornada das reposições:** cada desligamento passa por Abertura RQ, Aprovação RH, Recrutamento e Remuneração até a admissão, com prazo de abertura de 7 dias (carência de 3), RQs congeladas e aumentos de quadro.
 - **Login e logout** de 30 dias, com jornadas de 4h, 6h e 8h12, faltas, saídas antecipadas, horas extras e dobras que geram interjornada.
 

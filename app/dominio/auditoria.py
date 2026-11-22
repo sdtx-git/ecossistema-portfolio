@@ -9,8 +9,8 @@ CHECAGENS_QUADRO = {
     "gerencia": "Gerência diferente da coordenação",
 }
 CHECAGENS_SISTEMA = {
-    "supervisao_sistema": "Supervisão diferente do sistema organizacional",
-    "sem_conta": "Sem conta no sistema organizacional",
+    "supervisao_sistema": "Supervisão diferente do relatório",
+    "sem_conta": "Sem registro no relatório",
 }
 
 
@@ -98,13 +98,13 @@ def auditar_sistema(ativos: list, organizacional: list) -> list:
             divergencias.append(_divergencia(
                 colaborador, "sem_conta", CHECAGENS_SISTEMA, "supervisor",
                 colaborador["supervisor"], None, "vinculo_nao_localizado",
-                "Login não encontrado no sistema organizacional",
+                "Login não encontrado no relatório de funcionários",
             ))
         elif conta["supervisor"] != colaborador["supervisor"]:
             divergencias.append(_divergencia(
                 colaborador, "supervisao_sistema", CHECAGENS_SISTEMA, "supervisor",
                 colaborador["supervisor"], conta["supervisor"], "registro_direto",
-                "O sistema organizacional aponta outra supervisão para o mesmo login",
+                "O relatório de funcionários aponta outra supervisão para o mesmo login",
             ))
     return divergencias
 

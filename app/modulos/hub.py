@@ -16,21 +16,28 @@ LINKS_PADRAO = [
     {"id": "exo", "nome": "Exo", "descricao": "Assistente de gestão: tarefas, casos, medidas e agenda.",
      "categoria": "Sistemas internos", "tipo": "interno", "destino": "/exo/", "icone": "sparkles",
      "modulo": "exo", "manutencao": False},
-    {"id": "quadro", "nome": "Gestão do Quadro", "descricao": "Auditoria de hierarquia, novatos, vagas e desligados.",
+    {"id": "quadro", "nome": "Gestão do Quadro", "descricao": "Manutenção do quadro funcional.",
      "categoria": "Sistemas internos", "tipo": "interno", "destino": "/quadro/", "icone": "users-group",
      "modulo": "quadro", "manutencao": False},
-    {"id": "reposicoes", "nome": "Controle de Reposições", "descricao": "Abertura de RQ, prazos e quadro de vagas.",
+    {"id": "reposicoes", "nome": "Controle de Reposições", "descricao": "Gestão de reposições.",
      "categoria": "Sistemas internos", "tipo": "interno", "destino": "/reposicoes/", "icone": "arrows-exchange",
      "modulo": "reposicoes", "manutencao": False},
     {"id": "relatorios", "nome": "Relatórios Operacionais", "descricao": "Interjornada, excedentes e sub-jornada.",
      "categoria": "Sistemas internos", "tipo": "interno", "destino": "/relatorios/", "icone": "chart-bar",
      "modulo": "relatorios", "manutencao": False},
-    {"id": "externo-1", "nome": "Link externo 1", "descricao": "Exemplo de link externo.",
-     "categoria": "Links externos", "tipo": "externo", "destino": "https://example.com", "icone": "external-link",
-     "modulo": None, "manutencao": False},
-    {"id": "externo-2", "nome": "Link externo 2", "descricao": "Exemplo de link externo.",
-     "categoria": "Links externos", "tipo": "externo", "destino": "https://example.org", "icone": "external-link",
-     "modulo": None, "manutencao": False},
+]
+ACESSOS_EXEMPLO = (
+    ("Controle", "Painel de indicadores"), ("Controle", "Escalas"),
+    ("Gestão de pessoas", "Acompanhamento de agendamento"), ("Gestão de pessoas", "Acompanhamento de atendimento"),
+    ("Gestão de pessoas", "Portal do colaborador"),
+    ("Ponto", "Registrar ponto"), ("Ponto", "Solicitar ajuste"),
+    ("Serviços", "Assinaturas"), ("Serviços", "Chamados"),
+    ("Documentos", "Portal de documentos"),
+)
+LINKS_PADRAO += [
+    {"id": f"externo-{i}", "nome": nome, "descricao": "Exemplo de acesso rápido.", "categoria": categoria,
+     "tipo": "externo", "destino": f"https://example.com/{i}", "icone": "external-link", "modulo": None, "manutencao": False}
+    for i, (categoria, nome) in enumerate(ACESSOS_EXEMPLO, start=1)
 ]
 
 _trava = threading.Lock()
