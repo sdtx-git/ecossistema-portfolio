@@ -37,6 +37,8 @@ Auditoria de hierarquia, SLA de reposição de vagas e compliance de jornada (in
 | <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/hub-dark.png"><img alt="Hub de Governança" src="docs/screenshots/hub-light.png"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/quadro-dark.png"><img alt="Gestão do Quadro, auditoria de hierarquia" src="docs/screenshots/quadro-light.png"></picture> |
 | **Controle de Reposições** | **Relatórios Operacionais** |
 | <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/reposicoes-dark.png"><img alt="Controle de Reposições, abertura de RQ" src="docs/screenshots/reposicoes-light.png"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/relatorios-dark.png"><img alt="Relatórios Operacionais, interjornada" src="docs/screenshots/relatorios-light.png"></picture> |
+| **Exo · Tarefas** | **Exo · Equipes** |
+| <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/exo-tarefas-dark.png"><img alt="Exo, tarefas com prazo e prioridade" src="docs/screenshots/exo-tarefas-light.png"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/exo-equipes-dark.png"><img alt="Exo, equipes por supervisão" src="docs/screenshots/exo-equipes-light.png"></picture> |
 
 As imagens acompanham o tema do GitHub (claro ou escuro).
 
@@ -48,17 +50,24 @@ flowchart LR
         G[Gerador determinístico<br/>quadro, organizacional, RQs, ponto]
     end
     G --> B[(Base compartilhada<br/>em memória)]
-    C[Cargas automáticas<br/>validação, hash, retentativa, circuito] -->|evolui e entrega| B
+    C[Cargas automáticas<br/>validação, hash, retentativa, circuito] -->|evolui e extrai| B
+    C -.->|registra a entrega| Q & R & O
     B --> Q[Gestão do Quadro]
     B --> R[Controle de Reposições]
     B --> O[Relatórios Operacionais]
     B --> E[Exo]
-    E --- S[(SQLite<br/>tarefas, casos, medidas, agenda, auditoria)]
-    H[Hub] --> Q & R & O & E
+    B --> A[API de hierarquia<br/>filtros em cascata]
+    Q --- I[(Importações manuais<br/>em memória)]
+    E --- S[(SQLite<br/>usuários, sessões, tarefas, casos,<br/>medidas, agenda, auditoria)]
     E -->|extração sob pedido| C
+    H[Hub] --- L[(links.json)]
+    H -->|status das cargas| C
+    H -->|navegação e indicadores| Q & R & O & E
 ```
 
-- **Backend:** FastAPI em um único processo. Cada módulo é um `APIRouter` (`app/modulos/`). As regras de negócio ficam em funções puras e testáveis (`app/dominio/`), separadas das rotas.
+- **Backend:** FastAPI em um único processo, que também serve o frontend estático. Cada módulo é um `APIRouter` (`app/modulos/`). As regras de auditoria, calendário, jornada e reposição ficam em funções puras e testáveis (`app/dominio/`); os módulos montam as respostas da API e os campos derivados da demonstração.
+- **Cargas:** a cada rodada, fazem a base evoluir, extraem os arquivos, validam o layout, comparam por hash e registram a entrega por destino. Os módulos leem a base diretamente e usam o registro para mostrar quando o arquivo foi recebido.
+- **Persistência:** base sintética e importações manuais vivem em memória e recomeçam a cada reinício; os links do Hub ficam em `var/links.json` e os dados do Exo em `var/exo.db` (SQLite).
 - **Frontend:** HTML, CSS e JavaScript (ES modules) **sem etapa de build**. Um design system próprio (`frontend/design-system/`) fornece tokens com tema claro e escuro, componentes (tabela com busca, ordenação, paginação e exportação CSV, filtros hierárquicos em cascata, KPIs, modais, avisos) e o wrapper de gráficos (Chart.js).
 - **Exo:** senhas com PBKDF2-SHA256 e sal, sessão em cookie `HttpOnly`, bloqueio após tentativas seguidas, escopo de dados aplicado no SQL (o navegador esconde telas, mas quem protege o dado é o backend) e auditoria de toda alteração.
 
